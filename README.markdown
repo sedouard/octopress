@@ -1,5 +1,52 @@
 ## What is Octopress?
 
+```js
+//////////////////////////////////////////////////////////////////////////////
+//Creates an affinity group if specified one doesn't exist
+//////////////////////////////////////////////////////////////////////////////
+function createAffinityGroup(cb) {
+    console.log('Getting affinity groups...');
+    scripty.invoke('account affinity-group list', function (err, result) {
+
+        // check for errors
+        if (err) {
+            return cb(err);
+        }
+        console.log('Current affinity groups');
+        // For debugging purposes, list out names of existing affinity groups
+        for (var i in result) {
+            console.log(result[i].name);
+        }
+        // Get the name of the desired affinity group from the config.json file
+
+        var affinityGroup = nconf.get('affinity_group').name;
+        var label = nconf.get('affinity_group').label;
+        // Verify that affinity group hasn’t already been created.
+        for (var i in result) {
+            if (result[i].name === affinityGroup && result[i].label === label) {
+                //the affinty group to use in the config already exists
+                return cb();
+            }
+        }
+        // Create affinity group because it doesn’t exist
+        console.log('Specified affinity group ' + affinityGroup + ' does not exist, creating new one...');
+        var cmd = {
+            command: 'account affinity-group create',
+            positional: [affinityGroup],
+            location: '\"West US\"',
+            label: label
+        };
+
+        scripty.invoke(cmd, function (err) {
+            if (err) {
+                cb(err);
+            }
+            return cb();
+        });
+    });
+}
+```
+
 Octopress is [Jekyll](https://github.com/mojombo/jekyll) blogging at its finest.
 
 1. **Octopress sports a clean responsive theme** written in semantic HTML5, focused on readability and friendliness toward mobile devices.
