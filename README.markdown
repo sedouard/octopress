@@ -20,10 +20,9 @@ function createAffinityGroup(cb) {
         // Get the name of the desired affinity group from the config.json file
 
         var affinityGroup = nconf.get('affinity_group').name;
-        var label = nconf.get('affinity_group').label;
         // Verify that affinity group hasn’t already been created.
         for (var i in result) {
-            if (result[i].name === affinityGroup && result[i].label === label) {
+            if (result[i].name === affinityGroup) {
                 //the affinty group to use in the config already exists
                 return cb();
             }
